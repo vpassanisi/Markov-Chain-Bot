@@ -4,6 +4,7 @@ interface MarkovArgs {
   order: number;
   blackList: string[];
   chatData: string;
+  replaceArr: string[];
 }
 
 export class Markov {
@@ -12,13 +13,15 @@ export class Markov {
   order: number;
   blackList: string[];
   chatData: string;
+  replaceArr: string[];
 
-  constructor({ order, blackList, chatData }: MarkovArgs) {
+  constructor({ order, blackList, chatData, replaceArr }: MarkovArgs) {
     this.order = order;
     this.blackList = blackList;
     this.chatData = chatData;
     this.ngrams = {};
     this.starters = [];
+    this.replaceArr = replaceArr;
     this.buildTable();
   }
 
@@ -26,6 +29,7 @@ export class Markov {
     const data = fs.readFileSync(this.chatData, "utf-8").split("\n");
 
     data.forEach((str) => {
+      str = str.replaceAll(this.replaceArr[0], this.replaceArr[1]);
       for (let j = 0; j <= str.length - this.order; j++) {
         if (!this.blackList.every((blStr) => !str.includes(blStr))) break;
         const gram = str.substring(j, j + this.order);
